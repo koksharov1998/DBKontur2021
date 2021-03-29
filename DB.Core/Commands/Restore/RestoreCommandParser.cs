@@ -16,50 +16,31 @@ namespace DB.Core.Commands.Restore
 
         public (bool Ok, ConcurrentDictionary<string, ConcurrentDictionary<string, ConcurrentDictionary<string, string>>> Backup) Parse(JObject parameters)
         {
-            if (parameters.Count != 1)
-            {
-                return default;
-            }
-
             var backup = new ConcurrentDictionary<string, ConcurrentDictionary<string, ConcurrentDictionary<string, string>>>();
-            var ok = true;
 
-            var collectionProperty = parameters.Properties().First();
-            // throw new Exception(collectionProperty.ToString());
-
-            var collectionName = collectionProperty.Name;
-            // throw new Exception(collectionName.ToString());
-
-            try
+            foreach (var parameter in parameters)
             {
-                foreach (var collection in parameters.Properties())
+                var collection = backup.GetOrAdd(parameter.Key, _ => new ConcurrentDictionary<string, ConcurrentDictionary<string, string>>());
+                if (parameter.Value == null || !parameter.Value.Any())
+                    return default;
+
+                foreach (var token in parameter.Value)
                 {
-                    foreach (var idAndDocument in collection)
-                    {
-                        // throw new Exception(idAndDocument.ToString());
-                        // throw new Exception(idAndDocument.First().ToString());
-                        // throw new Exception(idAndDocument.First().First().ToString());   
+                    if (token is not JObject idAndDocument)
+                        return default;
 
-                        if (!validator.IsValid((JObject)idAndDocument.First().First()))
-                        {
-                            ok = false;
-                            break;
-                        }
-                        // throw new Exception(ok.ToString());
+                    var idProperty = idAndDocument.Properties().First();
+                    var id = idProperty.Name;
 
-                    }
+                    if (idProperty.First() is not JObject document)
+                        return default;
+
+                    if (!validator.IsValid(document))
+                        return default;
+    
+                    collection[id] = document.ToObject<ConcurrentDictionary<string, string>>();
                 }
             }
-            catch
-            {
-                ok = false;
-            }
-
-
-
-            if (!ok)
-                return default;
-
 
             return (true, backup);
         }

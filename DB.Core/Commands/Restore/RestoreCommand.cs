@@ -1,8 +1,6 @@
 ﻿using DB.Core.State;
 using Newtonsoft.Json.Linq;
-using System;
 using DB.Core.Helpers;
-using DB.Core.Validation;
 
 namespace DB.Core.Commands.Restore
 {
@@ -20,15 +18,11 @@ namespace DB.Core.Commands.Restore
             var (ok, backup) = parser.Parse(parameters);
 
             if (!ok)
-            {
                 return Result.Error.InvalidRequest;
-            }
 
             state.Collections.Clear();
-
-            // state.Collections
-
-            // внести backup в бд
+            foreach (var col in backup)
+                state.Collections[col.Key] = col.Value;
 
             return Result.Ok.Empty;
         }
