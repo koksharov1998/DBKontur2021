@@ -36,22 +36,13 @@ namespace DB.Core.Commands.Update
             if (idProperty.First() is not JArray operations)
                 return Result.Error.InvalidRequest;
 
-            //if (!collection.ContainsKey(id))
-              //  return Result.Error.NotFound;
-
-            //if (operations.Children<JObject>().Properties().Select(x => x.Name != "set" && x.Name != "unset").Count() != 0)
-            //  throw new Exception("dsf");
-            //return Result.Error.InvalidRequest;
+            if (!operations.All(op => op.Type == JTokenType.Object))
+                return Result.Error.InvalidRequest;
 
 
-
-
-            foreach (JObject obj in operations.Children<JObject>())
+            foreach (JObject operation in operations)
             {
-                if (obj.Properties().First().First() is not JObject objProp)
-                    return Result.Error.InvalidRequest;
-                // var objProp = obj.Properties().First();
-                switch (objProp.Name)
+                switch (operation.Properties().First().Name)
                 {
                     case "set":
                         if (!collection.ContainsKey(id))

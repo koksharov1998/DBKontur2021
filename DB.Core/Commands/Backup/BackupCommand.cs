@@ -12,11 +12,8 @@ namespace DB.Core.Commands.Backup
 
         public JObject Execute(IDbState state, JObject parameters)
         {
-
             if (parameters.Count != 0)
-            {
                 return Result.Error.InvalidRequest;
-            }
 
             return Result.Ok.WithContent(new JObject(state.Collections.Select(collection => new JProperty(collection.Key, collection.Value.Select(kvp => GetJObject(kvp.Key, kvp.Value))))));
         }
