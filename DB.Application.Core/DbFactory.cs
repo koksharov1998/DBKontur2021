@@ -29,7 +29,7 @@ namespace DB.Application.Core
                 }),
                 new DeleteCommand(),
                 new BackupCommand(),
-                new RestoreCommand()
+                new RestoreCommand(new RestoreCommandParser(validator))
             };
             var parser = new DbCommandParser();
             var state = new DbState();

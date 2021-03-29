@@ -8,21 +8,29 @@ namespace DB.Core.Commands.Restore
 {
     public class RestoreCommand : ICommand
     {
-        private readonly IDocumentValidator validator;
+        private readonly IRestoreCommandParser parser;
+
+        public RestoreCommand(IRestoreCommandParser parser)
+            => this.parser = parser;
 
         public string Name => "restore";
 
         public JObject Execute(IDbState state, JObject parameters)
         {
+            var (ok, backup) = parser.Parse(parameters);
 
-            if (parameters.Count != 1)
+            if (!ok)
             {
                 return Result.Error.InvalidRequest;
             }
 
-            var content = JObject.Parse();
+            state.Collections.Clear();
 
-            throw new NotImplementedException();
+            // state.Collections
+
+            // внести backup в бд
+
+            return Result.Ok.Empty;
         }
     }
 }
