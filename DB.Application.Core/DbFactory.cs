@@ -7,6 +7,7 @@ using DB.Core.Commands.Insert;
 using DB.Core.Commands.Replace;
 using DB.Core.Commands.Backup;
 using DB.Core.Commands.Restore;
+using DB.Core.Commands.Update;
 using DB.Core.Parsing;
 using DB.Core.State;
 using DB.Core.Validation;
@@ -29,7 +30,8 @@ namespace DB.Application.Core
                 }),
                 new DeleteCommand(),
                 new BackupCommand(),
-                new RestoreCommand(new RestoreCommandParser(validator))
+                new RestoreCommand(new RestoreCommandParser(validator)),
+                new UpdateCommand()
             };
             var parser = new DbCommandParser();
             var state = new DbState();
