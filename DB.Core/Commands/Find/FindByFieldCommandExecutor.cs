@@ -24,9 +24,8 @@ namespace DB.Core.Commands.Find
                 return Result.Ok.WithContent(Array.Empty<object>());
 
             // Если в коллекции есть индекс по указанному полю, то ищем через индекс
-            if (state.Indexies.TryGetValue(collectionName, out var collectionIndexies))
-                if (collectionIndexies.TryGetValue(field, out var indexFields))
-                    if (indexFields.TryGetValue(value, out var list))
+            if (state.Indexies.TryGetValue(collectionName, out var collectionIndexies) && collectionIndexies.TryGetValue(field, out var indexFields)
+                && indexFields.TryGetValue(value, out var list))
                         return Result.Ok.WithContent(list.Select(id => GetJObject(id, collection[id])));
 
             return Result.Ok.WithContent(

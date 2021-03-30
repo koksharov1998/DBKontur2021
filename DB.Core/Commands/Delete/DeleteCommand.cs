@@ -30,9 +30,9 @@ namespace DB.Core.Commands.Delete
 
             collection.TryRemove(id, out var deleted);
             foreach(var kvp in deleted)
-                if (state.Indexies.TryGetValue(collectionName, out var collectionIndexies))
-                    if (collectionIndexies.TryGetValue(kvp.Key, out var indexFields))
-                        if (indexFields.TryGetValue(kvp.Value, out var list))
+                if (state.Indexies.TryGetValue(collectionName, out var collectionIndexies)
+                    && collectionIndexies.TryGetValue(kvp.Key, out var indexFields)
+                    && indexFields.TryGetValue(kvp.Value, out var list))
                             list.Remove(id);
 
 

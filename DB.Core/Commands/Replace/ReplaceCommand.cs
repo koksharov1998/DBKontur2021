@@ -26,25 +26,23 @@ namespace DB.Core.Commands.Replace
 
             if (!collection.ContainsKey(id) && !upsert)
                     return Result.Error.NotFound;
+
             if (collection.ContainsKey(id))
             {
                 var deleted = collection[id];
                     foreach (var kvp in deleted)
-                        if (state.Indexies.TryGetValue(collectionName, out var collectionIndexies))
-                            if (collectionIndexies.TryGetValue(kvp.Key, out var indexFields))
-                                if (indexFields.TryGetValue(kvp.Value, out var list))
+                        if (state.Indexies.TryGetValue(collectionName, out var collectionIndexies) 
+                        && collectionIndexies.TryGetValue(kvp.Key, out var indexFields)
+                        && indexFields.TryGetValue(kvp.Value, out var list))
                                     list.Remove(id);
             }
-
-
 
             collection[id] = document.ToObject<ConcurrentDictionary<string, string>>();
 
             foreach (var kvp in collection[id])
-                if (state.Indexies.TryGetValue(collectionName, out var collectionIndexies))
-                    if (collectionIndexies.TryGetValue(kvp.Key, out var indexFields))
+                if (state.Indexies.TryGetValue(collectionName, out var collectionIndexies)
+                    && collectionIndexies.TryGetValue(kvp.Key, out var indexFields))
                         indexFields.GetOrAdd(kvp.Value, new List<string>()).Add(id);
-
 
             return Result.Ok.Empty;
         }
