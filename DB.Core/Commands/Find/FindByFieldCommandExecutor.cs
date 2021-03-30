@@ -10,20 +10,24 @@ namespace DB.Core.Commands.Find
     public class FindByFieldCommandExecutor : IFindCommandExecutor
     {
         public bool CanExecute(JToken parameters)
-            => parameters is JObject {Count: 1} jObject
+            => parameters is JObject { Count: 1 } jObject
                && jObject.Properties().Single().Value.Type == JTokenType.String;
 
         public JObject Execute(IDbState state, string collectionName, JToken parameters)
         {
-            var property = ((JObject) parameters).Properties().Single();
+            var property = ((JObject)parameters).Properties().Single();
 
             var field = property.Name;
             var value = property.Value.ToObject<string>();
-            
+
             if (!state.Collections.TryGetValue(collectionName, out var collection))
-            {
                 return Result.Ok.WithContent(Array.Empty<object>());
-            }
+
+            // Если в коллекции есть индекс по указанному полю, то ищем через индекс
+            if (state.Indexies.TryGetValue(collectionName, out var collectionIndexies))
+                if (collectionIndexies.TryGetValue(field, out var indexFields))
+                    if (indexFields.TryGetValue(value, out var list))
+                        return Result.Ok.WithContent(list.Select(id => GetJObject(id.ToString(), collection[id.ToString()])));
 
             return Result.Ok.WithContent(
                 collection.Where(document => document.Value.TryGetValue(field, out var docValue) && docValue == value)
