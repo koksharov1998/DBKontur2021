@@ -175,10 +175,21 @@ namespace DB.Tests.Unit
         }
 
         [Test]
-        public async Task Drop()
+        public async Task DropIndex()
         {
             var collection = dbClient.GetCollection("cars");
 
+            await collection.Indexes.AddAsync("mark");
+            await collection.Indexes.DropAsync("mark");
+
+            var modelS = new Dictionary<string, string> { ["brand"] = "Tesla", ["model"] = "ModelS" };
+            var roadster = new Dictionary<string, string> { ["brand"] = "Tesla", ["model"] = "Roadster" };
+            await collection.InsertAsync("1", modelS).ConfigureAwait(false);
+            await collection.InsertAsync("2", roadster).ConfigureAwait(false);
+
+            var actual = await collection.FindAsync("brand", "Tesla").ConfigureAwait(false);
+
+            Assert.That(actual, Is.EquivalentTo(new[] { ("1", modelS), ("2", roadster) }));
         }
     }
 }
