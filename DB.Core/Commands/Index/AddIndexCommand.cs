@@ -24,7 +24,10 @@ namespace DB.Core.Commands.AddIndex
             if (collectionProperty.Count != 1)
                 return Result.Error.InvalidRequest;
 
-            var key = parameters.ToObject<string>();
+            if (collectionProperty.Value.Type != JTokenType.String)
+                return Result.Error.InvalidRequest;
+
+            var key = collectionProperty.Value.ToObject<string>();
 
             var collectionIndexies = state.Indexies.GetOrAdd(collectionName, _ => new ConcurrentDictionary<string, ConcurrentDictionary<string, List<int>>>());
 
@@ -37,18 +40,20 @@ namespace DB.Core.Commands.AddIndex
 
             // заполнить indexKeys[возможное значение ключа] = "список айдишников строк, где есть такое значение ключа"
             foreach (var idAndDocument in collection)
-                indexKeys[document.key].Add(document.id);
-
-            // state.Collections.Select(collection => new JProperty(collection.Key, collection.Value.Select(kvp => GetJObject(kvp.Key, kvp.Value))))
-
-
+            {
+                var document = idAndDocument.Value;
+                foreach (var kvp in document)
+                {
+                    indexKeys.AddOrUpdate(kvp.Value, new List<int>(int.Parse(idAndDocument.Key)), (key, list) =>
+                    {
+                        list.Add(int.Parse(idAndDocument.Key));
+                        return list;
+                    });
+                    // indexKeys[kvp.Value].Add(int.Parse(idAndDocument.Key));
+                }
+            }
 
             return Result.Ok.Empty;
         }
-
-        private static JObject GetJObject(string id, ConcurrentDictionary<string, string> document)
-    => new(
-        new JProperty(id,
-            new JObject(document.Select(kvp => new JProperty(kvp.Key, kvp.Value)))));
     }
 }
