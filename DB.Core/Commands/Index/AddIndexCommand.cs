@@ -29,12 +29,12 @@ namespace DB.Core.Commands.AddIndex
 
             var key = collectionProperty.Value.ToObject<string>();
 
-            var collectionIndexies = state.Indexies.GetOrAdd(collectionName, _ => new ConcurrentDictionary<string, ConcurrentDictionary<string, List<int>>>());
+            var collectionIndexies = state.Indexies.GetOrAdd(collectionName, _ => new ConcurrentDictionary<string, ConcurrentDictionary<string, List<string>>>());
 
             if (collectionIndexies.ContainsKey(key))
                 return Result.Error.AlreadyExists;
 
-            var indexKeys = collectionIndexies.GetOrAdd(key, _ => new ConcurrentDictionary<string, List<int>>());
+            var indexKeys = collectionIndexies.GetOrAdd(key, _ => new ConcurrentDictionary<string, List<string>>());
 
             var collection = state.Collections.GetOrAdd(collectionName, _ => new ConcurrentDictionary<string, ConcurrentDictionary<string, string>>());
 
@@ -44,12 +44,11 @@ namespace DB.Core.Commands.AddIndex
                 var document = idAndDocument.Value;
                 foreach (var kvp in document)
                 {
-                    indexKeys.AddOrUpdate(kvp.Value, new List<int>(int.Parse(idAndDocument.Key)), (key, list) =>
+                    indexKeys.AddOrUpdate(kvp.Value, new List<string> { idAndDocument.Key }, (key, list) =>
                     {
-                        list.Add(int.Parse(idAndDocument.Key));
+                        list.Add(idAndDocument.Key);
                         return list;
                     });
-                    // indexKeys[kvp.Value].Add(int.Parse(idAndDocument.Key));
                 }
             }
 

@@ -29,7 +29,7 @@ namespace DB.Core.Commands.DropIndex
 
             var key = collectionProperty.Value.ToObject<string>();
 
-            var collectionIndexies = state.Indexies.GetOrAdd(collectionName, _ => new ConcurrentDictionary<string, ConcurrentDictionary<string, List<int>>>());
+            var collectionIndexies = state.Indexies.GetOrAdd(collectionName, _ => new ConcurrentDictionary<string, ConcurrentDictionary<string, List<string>>>());
 
             if (!collectionIndexies.ContainsKey(key))
                 return Result.Error.NotFound;

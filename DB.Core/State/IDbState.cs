@@ -6,6 +6,6 @@ namespace DB.Core.State
     public interface IDbState
     {
         ConcurrentDictionary<string, ConcurrentDictionary<string, ConcurrentDictionary<string, string>>> Collections { get; }
-        ConcurrentDictionary<string, ConcurrentDictionary<string, ConcurrentDictionary<string, List<int>>>> Indexies { get; }
+        ConcurrentDictionary<string, ConcurrentDictionary<string, ConcurrentDictionary<string, List<string>>>> Indexies { get; }
     }
 }

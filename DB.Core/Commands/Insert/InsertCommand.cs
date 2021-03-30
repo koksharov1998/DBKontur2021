@@ -40,7 +40,7 @@ namespace DB.Core.Commands.Insert
                     {
                         if (indexFields.TryGetValue(kvp.Value, out var list))
                         {
-                            list.Add(int.Parse(id));
+                            list.Add(id);
                         }
                     }
                 }

@@ -27,7 +27,7 @@ namespace DB.Core.Commands.Find
             if (state.Indexies.TryGetValue(collectionName, out var collectionIndexies))
                 if (collectionIndexies.TryGetValue(field, out var indexFields))
                     if (indexFields.TryGetValue(value, out var list))
-                        return Result.Ok.WithContent(list.Select(id => GetJObject(id.ToString(), collection[id.ToString()])));
+                        return Result.Ok.WithContent(list.Select(id => GetJObject(id, collection[id])));
 
             return Result.Ok.WithContent(
                 collection.Where(document => document.Value.TryGetValue(field, out var docValue) && docValue == value)
