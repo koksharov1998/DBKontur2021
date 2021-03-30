@@ -26,7 +26,7 @@ namespace DB.Core.Commands.Replace
 
             if (!collection.ContainsKey(id) && !upsert)
                     return Result.Error.NotFound;
-            if (collection.ContainsKey(id) && upsert)
+            if (collection.ContainsKey(id))
             {
                 var deleted = collection[id];
                     foreach (var kvp in deleted)

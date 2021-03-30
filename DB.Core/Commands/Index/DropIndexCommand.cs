@@ -29,7 +29,7 @@ namespace DB.Core.Commands.DropIndex
 
             var key = collectionProperty.Value.ToObject<string>();
 
-            if (state.Indexies.TryGetValue(collectionName, out var collectionIndexies))
+            if (!state.Indexies.TryGetValue(collectionName, out var collectionIndexies))
                 return Result.Error.NotFound;
 
             if (!collectionIndexies.ContainsKey(key))
