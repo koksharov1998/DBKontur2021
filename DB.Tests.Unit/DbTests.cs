@@ -173,5 +173,12 @@ namespace DB.Tests.Unit
 
             Assert.That(() => collection.FindAsync("1"), Throws.TypeOf<DbCommandException>().And.Property(nameof(DbCommandException.DbError)).EqualTo(Errors.NotFound));
         }
+
+        [Test]
+        public async Task Drop()
+        {
+            var collection = dbClient.GetCollection("cars");
+
+        }
     }
 }
