@@ -29,7 +29,8 @@ namespace DB.Core.Commands.DropIndex
 
             var key = collectionProperty.Value.ToObject<string>();
 
-            var collectionIndexies = state.Indexies.GetOrAdd(collectionName, _ => new ConcurrentDictionary<string, ConcurrentDictionary<string, List<string>>>());
+            if (state.Indexies.TryGetValue(collectionName, out var collectionIndexies))
+                return Result.Error.NotFound;
 
             if (!collectionIndexies.ContainsKey(key))
                 return Result.Error.NotFound;

@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using DB.Core.Helpers;
 using DB.Core.State;
 using Newtonsoft.Json.Linq;
@@ -35,8 +36,7 @@ namespace DB.Core.Commands.Insert
             foreach (var kvp in collection[id])
                 if (state.Indexies.TryGetValue(collectionName, out var collectionIndexies))
                     if (collectionIndexies.TryGetValue(kvp.Key, out var indexFields))
-                        if (indexFields.TryGetValue(kvp.Value, out var list))
-                            list.Add(id);
+                        indexFields.GetOrAdd(kvp.Value, new List<string>()).Add(id);
 
             return Result.Ok.Empty;
         }

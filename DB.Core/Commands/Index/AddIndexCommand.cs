@@ -38,18 +38,16 @@ namespace DB.Core.Commands.AddIndex
 
             var collection = state.Collections.GetOrAdd(collectionName, _ => new ConcurrentDictionary<string, ConcurrentDictionary<string, string>>());
 
-            // заполнить indexKeys[возможное значение ключа] = "список айдишников строк, где есть такое значение ключа"
+            // заполнить indexKeys[возможное значение ключа] = "список айдишников, где есть такое значение ключа"
             foreach (var idAndDocument in collection)
             {
                 var document = idAndDocument.Value;
-                foreach (var kvp in document)
-                {
-                    indexKeys.AddOrUpdate(kvp.Value, new List<string> { idAndDocument.Key }, (key, list) =>
+                if (document.TryGetValue(key, out var value))
+                    indexKeys.AddOrUpdate(value, new List<string> { idAndDocument.Key }, (key, list) =>
                     {
                         list.Add(idAndDocument.Key);
                         return list;
                     });
-                }
             }
 
             return Result.Ok.Empty;
