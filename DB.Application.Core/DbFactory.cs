@@ -31,9 +31,9 @@ namespace DB.Application.Core
                     new FindByFieldCommandExecutor()
                 }),
                 new DeleteCommand(),
-                new BackupCommand(),
-                new RestoreCommand(new RestoreCommandParser(validator)),
-                new UpdateCommand(),
+                //new BackupCommand(),
+                //new RestoreCommand(new RestoreCommandParser(validator)),
+                //new UpdateCommand(),
                 new AddIndexCommand(),
                 new DropIndexCommand()
             };

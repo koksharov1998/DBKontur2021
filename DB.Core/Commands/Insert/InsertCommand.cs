@@ -33,18 +33,10 @@ namespace DB.Core.Commands.Insert
             collection[id] = document.ToObject<ConcurrentDictionary<string, string>>();
 
             foreach (var kvp in collection[id])
-            {
                 if (state.Indexies.TryGetValue(collectionName, out var collectionIndexies))
-                {
                     if (collectionIndexies.TryGetValue(kvp.Key, out var indexFields))
-                    {
                         if (indexFields.TryGetValue(kvp.Value, out var list))
-                        {
                             list.Add(id);
-                        }
-                    }
-                }
-            }
 
             return Result.Ok.Empty;
         }

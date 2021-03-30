@@ -28,7 +28,15 @@ namespace DB.Core.Commands.Delete
             if (!collection.ContainsKey(id))
                 return Result.Error.NotFound;
 
-            collection.TryRemove(id, out _);
+            collection.TryRemove(id, out var deleted);
+            foreach(var kvp in deleted)
+                if (state.Indexies.TryGetValue(collectionName, out var collectionIndexies))
+                    if (collectionIndexies.TryGetValue(kvp.Key, out var indexFields))
+                        if (indexFields.TryGetValue(kvp.Value, out var list))
+                            list.Remove(id);
+
+
+
             return Result.Ok.Empty;
         }
     }
